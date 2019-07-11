@@ -16,13 +16,17 @@ Lemma lemma3 : (2 = 3) \/ ~(2 = 3).
 Proof.
 apply classic.
 Qed.
-  
+
+CWGroup "Assumption Tests".
+
 Fail CWTest lemma1 Assumes.
 CWTest lemma1 Assumes my_ax.
 Fail CWTest lemma1 Assumes classic.
-CWTest lemma1 Assumes lemma2.
+CWTest "lemma1" lemma1 Assumes lemma2.
 CWTest lemma1 Assumes classic my_ax.
-CWTest lemma2 Assumes my_ax.
+CWTest "lemma2" lemma2 Assumes my_ax.
 
 CWTest lemma3 Assumes classic my_ax.
 Fail CWTest lemma3 Assumes my_ax.
+
+CWEndGroup.

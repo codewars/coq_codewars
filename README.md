@@ -13,15 +13,21 @@ Now run `make`.
 
 Run `make .merlin` to create the `.merlin` file.
 
-## Examples
+## New Vernacular Commands
 
-A new vernacular command `CWTest qualid Assumes qualid*` is defined.
+A new vernacular command `CWTest msg? qualid Assumes qualid*` is defined.
 This command fails if the tested `qualid` depends on an axiom which is not listed
 after `Assumes`:
 
 ```coq
-CWTest lemma Assumes proof_irrelevance functional_extensionality.
+CWTest "Testing lemma" lemma Assumes proof_irrelevance functional_extensionality.
 ```
+
+The string argument after `CWTest` (`msg`) is optional.
+
+Two other commands are `CWGroup msg` and `CWEndGroup`.
+
+## Examples
 
 See [theories/Demo.v](theories/Demo.v) and [theories/Demo2.v](theories/Demo2.v)
 for more examples.

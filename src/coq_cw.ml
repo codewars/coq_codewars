@@ -12,7 +12,7 @@ let extract_axioms s =
   Printer.ContextObjectMap.fold fold s []
 
 (* TODO: compare axiom names (constants) also *)
-let test_assumptions env sigma s ax_tys =
+let test_assumptions msg env sigma s ax_tys =
   let unify ty1 ty2 = 
     match Reductionops.infer_conv env sigma ty1 ty2 with
     | Some _ -> true
@@ -23,7 +23,10 @@ let test_assumptions env sigma s ax_tys =
     | Printer.Axiom _ ->
       let ety = EConstr.of_constr ty in
       if List.exists (unify ety) ax_tys then ()
-      else CErrors.user_err (str "Axiom: " ++ Printer.pr_econstr_env env sigma ety)
+      else begin
+        Feedback.msg_notice (str ("\n<FAILED::> " ^ msg ^ "\n"));
+        CErrors.user_err (str "Axiom: " ++ Printer.pr_econstr_env env sigma ety)
+      end
     | _ -> ()
   in
   Printer.ContextObjectMap.iter iter s
@@ -35,7 +38,7 @@ let locate r =
     (gr, Globnames.printable_constr_of_global gr)
   with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
 
-let test c_ref ax_refs = 
+let test ?(msg = "Axioms") c_ref ax_refs = 
   let env = Global.env() in
   let sigma = Evd.from_env env in
   let (gr, cstr) = locate c_ref in
@@ -47,5 +50,5 @@ let test c_ref ax_refs =
       (fun (sigma, tys) (_, c) ->
         let sigma, ty = Typing.type_of env sigma (EConstr.of_constr c) in
         sigma, ty :: tys) (sigma, []) ax_grs_cstrs in
-  test_assumptions env sigma assumptions ax_tys;
-  Feedback.msg_notice (str "SUCCESS")
+  test_assumptions msg env sigma assumptions ax_tys;
+  Feedback.msg_notice (str ("\n<PASSED::> " ^ msg ^ "\n"))

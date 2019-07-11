@@ -1,1 +1,1 @@
-val test : Libnames.qualid -> Libnames.qualid list -> unit
+val test : ?msg:string -> Libnames.qualid -> Libnames.qualid list -> unit
