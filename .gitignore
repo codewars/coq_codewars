@@ -1,9 +1,17 @@
 .DS_Store
+*~
 .vscode/
 *.d
 Makefile
 Makefile.conf
 .merlin
 *.vo
+*.glob
+*.aux
 *.cmi
 *.cmo
+*.cmx
+*.o
+*.a
+*.cmxa
+*.cmxs

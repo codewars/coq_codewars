@@ -1,0 +1,1 @@
+Declare ML Module "coq_cw_plugin".
