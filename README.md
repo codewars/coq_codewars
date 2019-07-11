@@ -23,5 +23,5 @@ after `Assumes`:
 CWTest lemma Assumes proof_irrelevance functional_extensionality.
 ```
 
-See [theories/Demo.v](theories/Demo.v) and [theories/Demo2.v](theories/Demo.v)
+See [theories/Demo.v](theories/Demo.v) and [theories/Demo2.v](theories/Demo2.v)
 for more examples.
