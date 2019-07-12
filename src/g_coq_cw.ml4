@@ -20,3 +20,21 @@ VERNAC COMMAND EXTEND CWEndGroup CLASSIFIED AS QUERY
         Feedback.msg_notice (str "\n<COMPLETEDIN::>\n")
     ]
 END
+
+VERNAC COMMAND EXTEND CWFileSize CLASSIFIED AS QUERY
+| [ "CWFile" string_opt(fname) "Size" "<" int(size)] -> [ 
+        Coq_cw.test_file_size ?fname size
+    ]
+END
+
+VERNAC COMMAND EXTEND CWFileMatch CLASSIFIED AS QUERY
+| [ "CWFile" string_opt(fname) "Matches" string(regex)] -> [ 
+        Coq_cw.test_file_regex ?fname true regex
+    ]
+END
+
+VERNAC COMMAND EXTEND CWFileNegMatch CLASSIFIED AS QUERY
+| [ "CWFile" string_opt(fname) "Does" "Not" "Match" string(regex)] -> [ 
+        Coq_cw.test_file_regex ?fname false regex
+    ]
+END

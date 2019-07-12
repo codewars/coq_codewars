@@ -30,3 +30,12 @@ CWTest lemma3 Assumes classic my_ax.
 Fail CWTest lemma3 Assumes my_ax.
 
 CWEndGroup.
+
+CWFile "theories/Demo.v" Size < 1000.
+Fail CWFile "theories/Demo.v" Size < 200.
+
+CWFile "theories/Demo.v" Matches "Axiom".
+Fail CWFile "theories/Demo.v" Matches "$Theorem".
+
+Fail CWFile "theories/Demo.v" Does Not Match "Axiom".
+CWFile "theories/Demo.v" Does Not Match "$Theorem".
