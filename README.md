@@ -15,17 +15,36 @@ Run `make .merlin` to create the `.merlin` file.
 
 ## New Vernacular Commands
 
-A new vernacular command `CWTest msg? qualid Assumes qualid*` is defined.
-This command fails if the tested `qualid` depends on an axiom which is not listed
-after `Assumes`:
+- `CWTest string? qualid Assumes qualid*`
 
-```coq
-CWTest "Testing lemma" lemma Assumes proof_irrelevance functional_extensionality.
-```
+   This command fails if the tested `qualid` depends on an axiom which is not listed after `Assumes`:
 
-The string argument after `CWTest` (`msg`) is optional.
+   ```coq
+   CWTest "Testing lemma" lemma Assumes proof_irrelevance functional_extensionality.
+   ```
+   The string argument after `CWTest` is an optional message.
 
-Two other commands are `CWGroup msg` and `CWEndGroup`.
+- `CWGroup string`
+   
+   Begins a group of tests.
+
+- `CWEndGroup`
+
+   Ends a group of tests.
+
+- `CWFile string? Size < int`
+
+   Tests if the size of a file (the first string argument) is less than the second argument.
+
+   The file name is optional. The default file is the solution file.
+
+- `CWFile string? Matches string`
+
+   Tests if the content of a file matches a regular expression (the second argument). The regular expression syntax is [OCaml Str](https://caml.inria.fr/pub/docs/manual-ocaml/libref/Str.html) (`\` should not be escaped).
+
+- `CWFile string? Does Not Match string`
+
+   Tests if the content of a file does not match a regular expression (the second argument).
 
 ## Examples
 
