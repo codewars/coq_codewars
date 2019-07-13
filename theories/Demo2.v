@@ -43,7 +43,7 @@ From Coq Require Import Reals.
 Print Assumptions sqrt_pos.
 
 Fail CWTest sqrt_pos Assumes.
-CWTest sqrt_pos Assumes R R1 R1_neq_R0 Rinv total_order_T
+CWTest sqrt_pos Assumes R R0 R1 R1_neq_R0 Rinv total_order_T
      completeness archimed Rplus_opp_r Rplus_lt_compat_l
      Rplus_comm Rplus_assoc Rplus_0_l Rplus Ropp
      Rmult_plus_distr_l Rmult_lt_compat_l Rmult_comm

@@ -6,57 +6,47 @@ let passed msg = Feedback.msg_notice (str ("\n<PASSED::> " ^ msg ^ "\n"))
 
 let failed msg = Feedback.msg_notice (str ("\n<FAILED::> " ^ msg ^ "\n"))
 
-(* unused *)
-(* let extract_axioms s =
-  let fold t typ accu =
-    match t with
-    | Printer.Variable _ -> failwith "Variable"
-    | Printer.Opaque _ -> failwith "Opaque"
-    | Printer.Transparent _ -> failwith "Transparent"
-    | Printer.Axiom _ -> typ :: accu
-  in
-  Printer.ContextObjectMap.fold fold s [] *)
+(* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
+let assumptions r =
+  try
+    let gr = Smartlocate.locate_global_with_alias r in
+    let cstr = Globnames.printable_constr_of_global gr in
+    let st = Conv_oracle.get_transp_state (Environ.oracle (Global.env())) in
+    Assumptions.assumptions st gr cstr
+  with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
 
-(* TODO: compare axiom names (constants) also *)
-let test_assumptions msg env sigma s ax_tys =
-  let unify ty1 ty2 = 
-    match Reductionops.infer_conv env sigma ty1 ty2 with
-    | Some _ -> true
-    | None -> false
-  in
+let locate_constant r =
+  try
+    let gr = Smartlocate.locate_global_with_alias r in
+    match gr with
+    | Globnames.ConstRef cst -> cst
+    | _ -> CErrors.user_err (str "A constant is expected: " ++ Printer.pr_global gr)
+  with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
+
+let pr_axiom env sigma ax ty =
+  match ax with
+  | Printer.Constant kn -> 
+    Printer.pr_constant env kn ++ str " : " ++ Printer.pr_ltype_env env sigma ty
+  | _ -> str "? : "  ++ Printer.pr_ltype_env env sigma ty
+
+let test_axioms ?(msg = "Axiom Test") c_ref ax_refs = 
+  let env = Global.env() in
+  let sigma = Evd.from_env env in
+  let ax_csts = List.map locate_constant ax_refs in
+  let ax_objs = List.map (fun c -> Printer.Axiom (Printer.Constant c, [])) ax_csts in
+  let ax_set = Printer.ContextObjectSet.of_list ax_objs in
+  let assums = assumptions c_ref in
   let iter t ty =
     match t with
-    | Printer.Axiom _ ->
-      let ety = EConstr.of_constr ty in
-      if List.exists (unify ety) ax_tys then ()
+    | Printer.Axiom (ax, _) ->
+      if Printer.ContextObjectSet.mem t ax_set then ()
       else begin
         failed msg;
-        CErrors.user_err (str "Axiom: " ++ Printer.pr_econstr_env env sigma ety)
+        CErrors.user_err (str "Prohibited Axiom: " ++ pr_axiom env sigma ax ty)
       end
     | _ -> ()
   in
-  Printer.ContextObjectMap.iter iter s
-
-(* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
-let locate r =
-  try
-    let gr = Smartlocate.locate_global_with_alias r in
-    (gr, Globnames.printable_constr_of_global gr)
-  with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
-
-let test ?(msg = "Axioms") c_ref ax_refs = 
-  let env = Global.env() in
-  let sigma = Evd.from_env env in
-  let (gr, cstr) = locate c_ref in
-  let st = Conv_oracle.get_transp_state (Environ.oracle (Global.env())) in
-  let assumptions = Assumptions.assumptions st gr cstr in
-  let ax_grs_cstrs = List.map locate ax_refs in
-  let sigma, ax_tys = 
-    List.fold_left 
-      (fun (sigma, tys) (_, c) ->
-        let sigma, ty = Typing.type_of env sigma (EConstr.of_constr c) in
-        sigma, ty :: tys) (sigma, []) ax_grs_cstrs in
-  test_assumptions msg env sigma assumptions ax_tys;
+  let () = Printer.ContextObjectMap.iter iter assums in
   passed msg
 
 (** Tests that the file size is less than a given number *)
@@ -72,7 +62,7 @@ let test_file_size ?(fname = solution_file) size =
     end
   with Unix.Unix_error _ -> CErrors.user_err (str ("Bad file name: " ^ fname))
 
-(** Tests that the file's content matches a given regular expression*)
+(** Tests that the file's content matches a given regular expression *)
 let test_file_regex ?(fname = solution_file) match_flag regex =
   let re = Str.regexp regex in
   let ic = open_in fname in
@@ -87,5 +77,3 @@ let test_file_regex ?(fname = solution_file) match_flag regex =
     failed "Bad match";
     CErrors.user_err (str "Bad match")
   end
-
-

@@ -5,7 +5,7 @@ open Stdarg
 
 VERNAC COMMAND EXTEND CWTest CLASSIFIED AS QUERY
 | [ "CWTest" string_opt(msg) ref(e) "Assumes" ref_list(axioms)] -> [ 
-        Coq_cw.test ?msg e axioms
+        Coq_cw.test_axioms ?msg e axioms
     ]
 END
 

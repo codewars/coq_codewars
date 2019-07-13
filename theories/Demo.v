@@ -10,24 +10,30 @@ Qed.
 Lemma lemma2 : True = False.
 Admitted.
 
-From Coq Require Import Classical.
+From Coq Require Classical.
+
+Module Test.
+
+Import Classical.
 
 Lemma lemma3 : (2 = 3) \/ ~(2 = 3).
 Proof.
 apply classic.
 Qed.
 
+End Test.
+
 CWGroup "Assumption Tests".
 
 Fail CWTest lemma1 Assumes.
 CWTest lemma1 Assumes my_ax.
-Fail CWTest lemma1 Assumes classic.
-CWTest "lemma1" lemma1 Assumes lemma2.
-CWTest lemma1 Assumes classic my_ax.
-CWTest "lemma2" lemma2 Assumes my_ax.
+Fail CWTest lemma1 Assumes Classical_Prop.classic.
+Fail CWTest "lemma1" lemma1 Assumes lemma2.
+CWTest lemma1 Assumes Classical_Prop.classic my_ax.
+Fail CWTest "lemma2" lemma2 Assumes my_ax.
 
-CWTest lemma3 Assumes classic my_ax.
-Fail CWTest lemma3 Assumes my_ax.
+CWTest Test.lemma3 Assumes Classical_Prop.classic my_ax.
+Fail CWTest Test.lemma3 Assumes my_ax.
 
 CWEndGroup.
 
