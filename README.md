@@ -50,3 +50,9 @@ Run `make .merlin` to create the `.merlin` file.
 
 See [theories/Demo.v](theories/Demo.v) and [theories/Demo2.v](theories/Demo2.v)
 for more examples.
+
+Compiling demo files:
+```
+coqc -I src -R theories/ CW theories/Demo.v
+coqc -I src -R theories/ CW theories/Demo2.v
+```

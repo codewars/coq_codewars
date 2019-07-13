@@ -2,6 +2,7 @@
 -I src
 
 theories/Loader.v
+theories/Demo.v
 
 src/coq_cw.ml
 src/coq_cw.mli
