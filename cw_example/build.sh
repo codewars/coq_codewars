@@ -1,3 +1,3 @@
-coqc preloaded.v
-coqc solution.v
-coqc -I ../src -Q ../theories CW test.v
+coqc Preloaded.v
+coqc Solution.v
+coqc -I ../src -Q ../theories CW SolutionTest.v

@@ -1,16 +1,16 @@
-Require solution.
-Require Import preloaded.
+Require Solution.
+Require Import Preloaded.
 From CW Require Import Loader.
 
-CWGroup "Tests for solution.solution".
+CWGroup "Tests for Solution.solution".
   CWTestCase "Type test".
-    Fail CWAssert "Should fail" solution.solution : (1 + 1 = 2).
-    CWAssert solution.solution : (1 + 1 = 3).
+    Fail CWAssert "Should fail" Solution.solution : (1 + 1 = 2).
+    CWAssert Solution.solution : (1 + 1 = 3).
   CWTestCase "Assumptions test".
-    CWAssert "Testing solution" solution.solution Assumes test_axiom.
+    CWAssert "Testing solution" Solution.solution Assumes test_axiom.
 CWEndGroup.
 
-Definition solution_test := solution.solution.
+Definition solution_test := Solution.solution.
 
 CWGroup "Another test
 with line breaks".
