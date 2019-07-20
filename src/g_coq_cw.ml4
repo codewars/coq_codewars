@@ -1,7 +1,12 @@
 DECLARE PLUGIN "coq_cw_plugin"
 
-open Pp
 open Stdarg
+
+VERNAC COMMAND EXTEND CWAssert CLASSIFIED AS QUERY
+| [ "CWAssert" string_opt(msg) ref(e) "Assumes" ref_list(axioms)] -> [ 
+        Coq_cw.test_axioms ?msg e axioms
+    ]
+END
 
 VERNAC COMMAND EXTEND CWTest CLASSIFIED AS QUERY
 | [ "CWTest" string_opt(msg) ref(e) "Assumes" ref_list(axioms)] -> [ 
@@ -9,15 +14,27 @@ VERNAC COMMAND EXTEND CWTest CLASSIFIED AS QUERY
     ]
 END
 
-VERNAC COMMAND EXTEND CWGroup CLASSIFIED AS QUERY
+VERNAC COMMAND EXTEND CWGroup CLASSIFIED AS SIDEFF
 | [ "CWGroup" string(msg)] -> [ 
-        Feedback.msg_notice (str ("\n<DESCRIBE::> " ^ msg ^ "\n"))
+        Coq_cw.begin_group "DESCRIBE" msg
     ]
 END
 
-VERNAC COMMAND EXTEND CWEndGroup CLASSIFIED AS QUERY
-| [ "CWEndGroup"] -> [ 
-        Feedback.msg_notice (str "\n<COMPLETEDIN::>\n")
+VERNAC COMMAND EXTEND CWEndGroup CLASSIFIED AS SIDEFF
+| [ "CWEndGroup"] -> [
+        Coq_cw.end_group "DESCRIBE"
+    ]
+END
+
+VERNAC COMMAND EXTEND CWTestCase CLASSIFIED AS SIDEFF
+| [ "CWTestCase" string(msg)] -> [ 
+        Coq_cw.begin_group "IT" msg
+    ]
+END
+
+VERNAC COMMAND EXTEND CWEnd CLASSIFIED AS SIDEFF
+| [ "CWEnd"] -> [
+        Coq_cw.end_group "IT"
     ]
 END
 

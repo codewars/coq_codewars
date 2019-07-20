@@ -2,9 +2,45 @@ open Pp
 
 let solution_file = "/workspace/Solution.v"
 
-let passed msg = Feedback.msg_notice (str ("\n<PASSED::> " ^ msg ^ "\n"))
+let format_msg =
+  let re = Str.regexp_string "\n" in
+  Str.global_replace re "<:LF:>" 
 
-let failed msg = Feedback.msg_notice (str ("\n<FAILED::> " ^ msg ^ "\n"))
+let display tag msg =
+  Feedback.msg_notice (str (Printf.sprintf "\n<%s::>%s\n" tag (format_msg msg)))
+
+let passed = display "PASSED"
+
+let failed = display "FAILED"
+
+type group = {
+  tag : string;
+  start_time : float
+}
+
+let mk_group tag t = { tag = tag; start_time = t }
+
+let group_stack = Summary.ref ~name:"open_groups" ([] : group list)
+
+let rec end_group tag =
+  let e = Unix.gettimeofday() in
+  match !group_stack with 
+  | [] -> CErrors.user_err (str "No open groups")
+  | {tag = "IT"} :: g :: gs when tag <> "IT" ->
+    end_group "IT"; end_group tag
+  | g :: gs ->
+    if g.tag <> tag then CErrors.user_err (str "Ending incorrect group");
+    group_stack := gs;
+    display "COMPLETEDIN" (Printf.sprintf "%.2f" ((e -. g.start_time) *. 1000.))
+
+let begin_group tag name =
+  let t = Unix.gettimeofday() in
+  let () =
+    match !group_stack with
+    | {tag = "IT"} :: _ when tag = "IT" -> end_group "IT"
+    | _ -> () in
+  group_stack := mk_group tag t :: !group_stack;
+  display tag name
 
 (* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
 let assumptions r =
