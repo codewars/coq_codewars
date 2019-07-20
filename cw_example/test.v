@@ -4,11 +4,13 @@ From CW Require Import Loader.
 
 CWGroup "Tests for solution.solution".
   CWTestCase "Type test".
-    Example solution_test : 1 + 1 = 3.
-    Proof. exact solution.solution. Qed.
+    Fail CWAssert "Should fail" solution.solution : (1 + 1 = 2).
+    CWAssert solution.solution : (1 + 1 = 3).
   CWTestCase "Assumptions test".
     CWAssert "Testing solution" solution.solution Assumes test_axiom.
 CWEndGroup.
+
+Definition solution_test := solution.solution.
 
 CWGroup "Another test
 with line breaks".

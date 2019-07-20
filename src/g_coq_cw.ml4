@@ -2,7 +2,13 @@ DECLARE PLUGIN "coq_cw_plugin"
 
 open Stdarg
 
-VERNAC COMMAND EXTEND CWAssert CLASSIFIED AS QUERY
+VERNAC COMMAND EXTEND CWAssertType CLASSIFIED AS QUERY
+| [ "CWAssert" string_opt(msg) ref(r) ":" constr(ty)] -> [ 
+        Coq_cw.test_type ?msg r ty
+    ]
+END
+
+VERNAC COMMAND EXTEND CWAssertAssumptions CLASSIFIED AS QUERY
 | [ "CWAssert" string_opt(msg) ref(e) "Assumes" ref_list(axioms)] -> [ 
         Coq_cw.test_axioms ?msg e axioms
     ]

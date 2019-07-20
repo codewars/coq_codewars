@@ -42,6 +42,27 @@ let begin_group tag name =
   group_stack := mk_group tag t :: !group_stack;
   display tag name
 
+let locate r =
+  try
+    let gr = Smartlocate.locate_global_with_alias r in
+    (gr, Globnames.printable_constr_of_global gr)
+  with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
+  
+let test_type ?(msg = "Type Test") r c_ty =
+  let env = Global.env() in
+  let sigma = Evd.from_env env in
+  let tm = EConstr.of_constr (snd (locate r)) in
+  let sigma, expected_ty = Constrintern.interp_constr_evars env sigma c_ty in
+  let actual_ty = Retyping.get_type_of ~lax:true env sigma tm in
+  match Reductionops.infer_conv env sigma actual_ty expected_ty with
+  | Some _ -> passed msg
+  | None ->
+    let p_actual = Printer.pr_econstr_env env sigma actual_ty in
+    let p_expected = Printer.pr_econstr_env env sigma expected_ty in
+    failed (Printf.sprintf "%s\nActual type = %s\nExpected type = %s"
+              msg (string_of_ppcmds p_actual) (string_of_ppcmds p_expected));
+    CErrors.user_err (str "Incorrect Type: " ++ Printer.pr_econstr_env env sigma tm)
+
 (* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
 let assumptions r =
   try
