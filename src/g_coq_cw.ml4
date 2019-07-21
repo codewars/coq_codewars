@@ -14,12 +14,6 @@ VERNAC COMMAND EXTEND CWAssertAssumptions CLASSIFIED AS QUERY
     ]
 END
 
-VERNAC COMMAND EXTEND CWTest CLASSIFIED AS QUERY
-| [ "CWTest" string_opt(msg) ref(e) "Assumes" ref_list(axioms)] -> [ 
-        Coq_cw.test_axioms ?msg e axioms
-    ]
-END
-
 VERNAC COMMAND EXTEND CWGroup CLASSIFIED AS SIDEFF
 | [ "CWGroup" string(msg)] -> [ 
         Coq_cw.begin_group "DESCRIBE" msg
@@ -32,14 +26,14 @@ VERNAC COMMAND EXTEND CWEndGroup CLASSIFIED AS SIDEFF
     ]
 END
 
-VERNAC COMMAND EXTEND CWTestCase CLASSIFIED AS SIDEFF
-| [ "CWTestCase" string(msg)] -> [ 
+VERNAC COMMAND EXTEND CWTest CLASSIFIED AS SIDEFF
+| [ "CWTest" string(msg)] -> [ 
         Coq_cw.begin_group "IT" msg
     ]
 END
 
-VERNAC COMMAND EXTEND CWEnd CLASSIFIED AS SIDEFF
-| [ "CWEnd"] -> [
+VERNAC COMMAND EXTEND CWEndTest CLASSIFIED AS SIDEFF
+| [ "CWEndTest"] -> [
         Coq_cw.end_group "IT"
     ]
 END

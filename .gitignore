@@ -3,7 +3,7 @@
 *~
 .vscode/
 *.d
-Makefile
+/Makefile
 Makefile.conf
 .merlin
 *.vo

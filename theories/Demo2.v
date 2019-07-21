@@ -16,13 +16,16 @@ Proof. intros. unfold fib_prog at 1. rewrite fix_sub_eq.
 
 From CW Require Import Loader.
 
-CWTest fib0 Assumes.
-CWTest fib1 Assumes.
-Fail CWTest fibSS Assumes.
+CWGroup "Program tests".
 
-CWTest fibSS Assumes proof_irrelevance.
-Fail CWTest fibSS Assumes functional_extensionality_dep.
+CWAssert fib0 Assumes.
+CWAssert fib1 Assumes.
+Fail CWAssert fibSS Assumes.
 
+CWAssert fibSS Assumes proof_irrelevance.
+Fail CWAssert fibSS Assumes functional_extensionality_dep.
+
+CWEndGroup.
 
 From Equations Require Import Equations.
 
@@ -34,18 +37,27 @@ Check fibE_equation_3.
 
 Print Assumptions fibE_equation_3.
 
-Fail CWTest fibE_equation_3 Assumes.
-Fail CWTest fibE_equation_3 Assumes proof_irrelevance.
-CWTest fibE_equation_3 Assumes functional_extensionality_dep.
+CWGroup "Equations tests".
+
+Fail CWAssert fibE_equation_3 Assumes.
+Fail CWAssert fibE_equation_3 Assumes proof_irrelevance.
+CWAssert fibE_equation_3 Assumes functional_extensionality_dep.
+
+CWEndGroup.
 
 From Coq Require Import Reals.
 
 Print Assumptions sqrt_pos.
 
-Fail CWTest sqrt_pos Assumes.
-CWTest sqrt_pos Assumes R R0 R1 R1_neq_R0 Rinv total_order_T
-     completeness archimed Rplus_opp_r Rplus_lt_compat_l
-     Rplus_comm Rplus_assoc Rplus_0_l Rplus Ropp
-     Rmult_plus_distr_l Rmult_lt_compat_l Rmult_comm
-     Rmult_assoc Rmult_1_l Rmult Rlt_trans Rlt_asym
-     Rlt Rinv_l Rinv up.
+CWGroup "Real numbers".
+
+Fail CWAssert sqrt_pos Assumes.
+CWAssert "Real Number Axioms" sqrt_pos Assumes
+  R R0 R1 Rplus Rmult Ropp Rinv Rlt up
+  Rplus_comm Rplus_assoc Rplus_opp_r Rplus_0_l
+  Rmult_comm Rmult_assoc Rinv_l Rmult_1_l R1_neq_R0
+  Rmult_plus_distr_l total_order_T
+  Rlt_asym Rlt_trans Rplus_lt_compat_l Rmult_lt_compat_l
+  archimed completeness.  
+
+CWEndGroup.

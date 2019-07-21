@@ -25,19 +25,21 @@ End Test.
 
 CWGroup "Assumption Tests".
 
-Fail CWTest lemma1 Assumes.
-CWTest lemma1 Assumes my_ax.
-Fail CWTest lemma1 Assumes Classical_Prop.classic.
-Fail CWTest "lemma1" lemma1 Assumes lemma2.
-CWTest lemma1 Assumes Classical_Prop.classic my_ax.
-Fail CWTest "lemma2" lemma2 Assumes my_ax.
+Fail CWAssert lemma1 Assumes.
+CWAssert lemma1 Assumes my_ax.
+Fail CWAssert lemma1 Assumes Classical_Prop.classic.
+Fail CWAssert "lemma1" lemma1 Assumes lemma2.
+CWAssert lemma1 Assumes Classical_Prop.classic my_ax.
+Fail CWAssert "lemma2" lemma2 Assumes my_ax.
 
-CWTest Test.lemma3 Assumes Classical_Prop.classic my_ax.
-Fail CWTest Test.lemma3 Assumes my_ax.
+CWAssert Test.lemma3 Assumes Classical_Prop.classic my_ax.
+Fail CWAssert Test.lemma3 Assumes my_ax.
 
 CWEndGroup.
 
-CWFile "theories/Demo.v" Size < 1000.
+CWGroup "File Tests".
+
+CWFile "theories/Demo.v" Size < 1100.
 Fail CWFile "theories/Demo.v" Size < 200.
 
 CWFile "theories/Demo.v" Matches "Axiom".
@@ -45,3 +47,5 @@ Fail CWFile "theories/Demo.v" Matches "$Theorem".
 
 Fail CWFile "theories/Demo.v" Does Not Match "Axiom".
 CWFile "theories/Demo.v" Does Not Match "$Theorem".
+
+CWEndGroup.

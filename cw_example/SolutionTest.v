@@ -3,11 +3,17 @@ Require Import Preloaded.
 From CW Require Import Loader.
 
 CWGroup "Tests for Solution.solution".
-  CWTestCase "Type test".
+  CWTest "Type test".
+    (* The expected type should be in parentheses *)
     Fail CWAssert "Should fail" Solution.solution : (1 + 1 = 2).
     CWAssert Solution.solution : (1 + 1 = 3).
-  CWTestCase "Assumptions test".
+  (* CWEndTest is optional before CWTest or CWEndGroup *)
+  CWEndTest.
+  CWTest "Assumptions test".
     CWAssert "Testing solution" Solution.solution Assumes test_axiom.
+  CWTest "Type test 2".
+    Definition expected := 1 + 1 = 3.
+    CWAssert Solution.solution : expected.
 CWEndGroup.
 
 Definition solution_test := Solution.solution.
@@ -18,17 +24,17 @@ with line breaks".
 (line break)" solution_test Assumes test_axiom.
 CWEndGroup.
 
-CWTestCase "Without group".
+CWTest "Without group".
   CWAssert solution_test Assumes test_axiom.
-CWEnd.
+CWEndTest.
 
 CWGroup "Nested groups".
   CWGroup "Level 2".
-    CWTestCase "Test 1".
+    CWTest "Test 1".
       CWAssert solution_test Assumes test_axiom.
   CWEndGroup.
-  CWTestCase "Test 2".
+  CWTest "Test 2".
     CWAssert solution_test Assumes test_axiom.
     CWAssert solution_test Assumes test_axiom.
-  CWEnd.
+  CWEndTest.
 CWEndGroup.
