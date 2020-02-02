@@ -55,3 +55,9 @@ VERNAC COMMAND EXTEND CWFileNegMatch CLASSIFIED AS QUERY
         Coq_cw.test_file_regex ?fname false regex
     ]
 END
+
+VERNAC COMMAND EXTEND CWCompileAndRun CLASSIFIED AS SIDEFF
+| [ "CWCompileAndRun" string_list(files) "Options" string_opt(options) "Driver" string(driver) ] -> [
+        Coq_cw.compile_and_run files ?options driver
+    ]
+END

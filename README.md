@@ -51,7 +51,7 @@ Run `make .merlin` to create the `.merlin` file.
 
    Test cases cannot be nested.
 
-- `CWEndTest`.
+- `CWEndTest`
 
    Ends a test case. This command is optional before `CWTest` and `CWEndGroup`.
 
