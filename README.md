@@ -69,9 +69,22 @@ Run `make .merlin` to create the `.merlin` file.
 
    Tests if the content of a file does not match a regular expression (the second argument).
 
+- `CWCompileAndRun ocaml_files* Options options? Driver driver_string`
+
+   Compiles and runs given `ocaml_files` and the driver code `driver_string`. The compilation is performed with `ocamlopt` and with the provided `options`.
+
+   ```coq
+   Require Extraction.
+   Extraction "out.ml" plus.
+   CWCompileAndRun "out.mli" "out.ml" Options "-O3 -verbose" Driver "
+     open Out
+     let () = assert (add O (S O) = (S O))
+   ".
+   ```
+
 ## Examples
 
-See [cw_example/SolutionTest.v](cw_example/SolutionTest.v).
+See [cw_example/SolutionTest.v](cw_example/SolutionTest.v) and [cw_example_extraction/SolutionTest.v](cw_example_extraction/SolutionTest.v)
 
 More examples are in [theories/Demo.v](theories/Demo.v) and [theories/Demo2.v](theories/Demo2.v).
 
