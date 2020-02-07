@@ -137,20 +137,25 @@ let test_file_regex ?(fname = solution_file) match_flag regex =
     CErrors.user_err (str "Bad match")
   end
 
-let run_system_command args =
+let run_system_command ?err_msg args =
   let cmd = String.concat " " args in
   Printf.printf "Running: %s" cmd;
   match Unix.system cmd with
-  | Unix.WEXITED 0 -> passed "OK"
-  | _ -> failed "Failed"
+  | Unix.WEXITED 0 -> ()
+  | _ ->
+    let msg = match err_msg with None -> "Failed" | Some msg -> msg in
+    failed msg;
+    CErrors.user_err (str msg)
 
 let write_file fname str =
   let oc = open_out fname in
   Printf.fprintf oc "%s" str;
   close_out oc
 
+(** Compiles and runs the given OCaml source files *)
 let compile_and_run files ?(options = "") driver_code =
   write_file driver_file driver_code;
-  run_system_command ([ocaml_compiler; options] @ files @ [driver_file]);
+  run_system_command ~err_msg:"Compilation failed" ([ocaml_compiler; options] @ files @ [driver_file]);
+  passed "OK";
   run_system_command ["./a.out"];
   passed "OK"
