@@ -10,6 +10,8 @@ Extract Inductive nat => "int"
 Extract Constant plus => "( + )".
 Extract Constant mult => "( * )".
 
+CWGroup "Group".
+
 CWTest "Successful Extraction Test".
 
 Extraction "factorial.ml" Solution.factorial.
@@ -38,3 +40,4 @@ let () =
 
 CWEndTest.
 
+CWEndGroup.

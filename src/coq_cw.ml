@@ -44,6 +44,11 @@ let begin_group tag name =
   group_stack := mk_group tag t :: !group_stack;
   display tag name
 
+let rec end_all_groups () =
+  match !group_stack with
+  | [] -> ()
+  | {tag = tag} :: gs -> end_group tag; end_all_groups ()
+
 let locate r =
   try
     let gr = Smartlocate.locate_global_with_alias r in
@@ -63,6 +68,7 @@ let test_type ?(msg = "Type Test") r c_ty =
     let p_expected = Printer.pr_econstr_env env sigma expected_ty in
     failed (Printf.sprintf "%s\nActual type = %s\nExpected type = %s"
               msg (string_of_ppcmds p_actual) (string_of_ppcmds p_expected));
+    end_all_groups ();
     CErrors.user_err (str "Incorrect Type: " ++ Printer.pr_econstr_env env sigma tm)
 
 (* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
@@ -101,6 +107,7 @@ let test_axioms ?(msg = "Axiom Test") c_ref ax_refs =
       if Printer.ContextObjectSet.mem t ax_set then ()
       else begin
         failed msg;
+        end_all_groups ();
         CErrors.user_err (str "Prohibited Axiom: " ++ pr_axiom env sigma ax ty)
       end
     | _ -> ()
@@ -117,6 +124,7 @@ let test_file_size ?(fname = solution_file) size =
     else begin
       let msg = Format.sprintf "Size %d >= %d" stats.Unix.st_size size in 
       failed msg;
+      end_all_groups ();
       CErrors.user_err (str msg)
     end
   with Unix.Unix_error _ -> CErrors.user_err (str ("Bad file name: " ^ fname))
@@ -134,6 +142,7 @@ let test_file_regex ?(fname = solution_file) match_flag regex =
     passed "OK"
   else begin
     failed "Bad match";
+    end_all_groups ();
     CErrors.user_err (str "Bad match")
   end
 
@@ -145,6 +154,7 @@ let run_system_command ?err_msg args =
   | _ ->
     let msg = match err_msg with None -> "Failed" | Some msg -> msg in
     failed msg;
+    end_all_groups ();
     CErrors.user_err (str msg)
 
 let write_file fname str =
