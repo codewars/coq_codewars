@@ -14,7 +14,7 @@ CWTest "Successful Extraction Test".
 
 Extraction "factorial.ml" Solution.factorial.
 
-CWCompileAndRun "factorial.mli" "factorial.ml" Options "-O3" Driver "
+CWCompileAndRun "factorial.mli" "factorial.ml" Options "-verbose" Driver "
 open Factorial
 let () = 
   assert (factorial 3 = 6);
@@ -28,7 +28,7 @@ Extract Constant mult => "*".
 
 Extraction "factorial.ml" Solution.factorial.
 
-CWCompileAndRun "factorial.mli" "factorial.ml" Options "-O2" Driver "
+CWCompileAndRun "factorial.mli" "factorial.ml" Options "-verbose" Driver "
 open Factorial
 let () = 
   assert (factorial 3 = 6);

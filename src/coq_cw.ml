@@ -1,7 +1,7 @@
 open Pp
 
 let solution_file = "/workspace/Solution.v"
-let ocaml_compiler = "ocamlopt"
+let ocaml_compiler = "ocamlc"
 let driver_file = "driver.ml"
 
 let format_msg =

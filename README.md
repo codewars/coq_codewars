@@ -71,12 +71,12 @@ Run `make .merlin` to create the `.merlin` file.
 
 - `CWCompileAndRun ocaml_files* Options options? Driver driver_string`
 
-   Compiles and runs given `ocaml_files` and the driver code `driver_string`. The compilation is performed with `ocamlopt` and with the provided `options`.
+   Compiles and runs given `ocaml_files` and the driver code `driver_string`. The compilation is performed with `ocamlc` and with the provided `options`.
 
    ```coq
    Require Extraction.
    Extraction "out.ml" plus.
-   CWCompileAndRun "out.mli" "out.ml" Options "-O3 -verbose" Driver "
+   CWCompileAndRun "out.mli" "out.ml" Options "-I . -verbose" Driver "
      open Out
      let () = assert (add O (S O) = (S O))
    ".
