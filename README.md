@@ -35,6 +35,11 @@ Run `make .merlin` to create the `.merlin` file.
 
    Note that the `term` should be in parentheses.
 
+- `CWStopOnFailure 0/1`
+
+   This command controls whether Coq execution should be stopped after a failed test (`1`) or not (`0`).
+   The default behavior is to stop after the first failed test.
+
 - `CWGroup string`
    
    Begins a group of tests (outputs `<DESCRIBE::>`).

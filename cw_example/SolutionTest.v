@@ -2,15 +2,17 @@ Require Solution.
 Require Import Preloaded.
 From CW Require Import Loader.
 
+CWStopOnFailure 0.
+
 CWGroup "Tests for Solution.solution".
   CWTest "Type test".
     (* The expected type should be in parentheses *)
-    Fail CWAssert "Should fail" Solution.solution : (1 + 1 = 2).
+    CWAssert "Should fail" Solution.solution : (1 + 1 = 2).
     CWAssert Solution.solution : (1 + 1 = 3).
   (* CWEndTest is optional before CWTest or CWEndGroup *)
   CWEndTest.
   CWTest "Assumptions test".
-    CWAssert "Testing solution" Solution.solution Assumes test_axiom.
+    CWAssert "Testing solution" Solution.solution Assumes. (*test_axiom.*)
   CWTest "Type test 2".
     Definition expected := 1 + 1 = 3.
     CWAssert Solution.solution : expected.

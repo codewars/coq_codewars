@@ -14,6 +14,12 @@ VERNAC COMMAND EXTEND CWAssertAssumptions CLASSIFIED AS QUERY
     ]
 END
 
+VERNAC COMMAND EXTEND CWStopOnFailure CLASSIFIED AS SIDEFF
+| [ "CWStopOnFailure" int(flag)] -> [
+        Coq_cw.stop_on_failure flag
+    ]
+END
+
 VERNAC COMMAND EXTEND CWGroup CLASSIFIED AS SIDEFF
 | [ "CWGroup" string(msg)] -> [ 
         Coq_cw.begin_group "DESCRIBE" msg

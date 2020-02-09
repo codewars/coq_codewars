@@ -11,14 +11,14 @@ let format_msg =
 let display tag msg =
   Feedback.msg_notice (str (Printf.sprintf "\n<%s::>%s\n" tag (format_msg msg)))
 
-let passed = display "PASSED"
-
-let failed = display "FAILED"
+let stop_on_failure_flag = ref true
 
 type group = {
   tag : string;
   start_time : float
 }
+
+let stop_on_failure v = stop_on_failure_flag := v <> 0
 
 let mk_group tag t = { tag = tag; start_time = t }
 
@@ -49,6 +49,15 @@ let rec end_all_groups () =
   | [] -> ()
   | {tag = tag} :: gs -> end_group tag; end_all_groups ()
 
+let passed = display "PASSED"
+
+let failed msg = 
+  display "FAILED" msg;
+  if !stop_on_failure_flag then begin
+    end_all_groups ();
+    CErrors.user_err (str msg)
+  end
+
 let locate r =
   try
     let gr = Smartlocate.locate_global_with_alias r in
@@ -67,9 +76,8 @@ let test_type ?(msg = "Type Test") r c_ty =
     let p_actual = Printer.pr_econstr_env env sigma actual_ty in
     let p_expected = Printer.pr_econstr_env env sigma expected_ty in
     failed (Printf.sprintf "%s\nActual type = %s\nExpected type = %s"
-              msg (string_of_ppcmds p_actual) (string_of_ppcmds p_expected));
-    end_all_groups ();
-    CErrors.user_err (str "Incorrect Type: " ++ Printer.pr_econstr_env env sigma tm)
+              msg (string_of_ppcmds p_actual) (string_of_ppcmds p_expected))
+    (* CErrors.user_err (str "Incorrect Type: " ++ Printer.pr_econstr_env env sigma tm) *)
 
 (* Based on the PrintAssumptions code from vernac/vernacentries.ml *)
 let assumptions r =
@@ -106,9 +114,8 @@ let test_axioms ?(msg = "Axiom Test") c_ref ax_refs =
     | Printer.Axiom (ax, _) ->
       if Printer.ContextObjectSet.mem t ax_set then ()
       else begin
-        failed msg;
-        end_all_groups ();
-        CErrors.user_err (str "Prohibited Axiom: " ++ pr_axiom env sigma ax ty)
+        let p_axiom = pr_axiom env sigma ax ty in
+        failed (Printf.sprintf "%s\nProhibited Axiom: %s" msg (string_of_ppcmds p_axiom))
       end
     | _ -> ()
   in
@@ -123,9 +130,7 @@ let test_file_size ?(fname = solution_file) size =
       passed (Format.sprintf "Size %d < %d" stats.Unix.st_size size)
     else begin
       let msg = Format.sprintf "Size %d >= %d" stats.Unix.st_size size in 
-      failed msg;
-      end_all_groups ();
-      CErrors.user_err (str msg)
+      failed msg
     end
   with Unix.Unix_error _ -> CErrors.user_err (str ("Bad file name: " ^ fname))
 
@@ -140,22 +145,15 @@ let test_file_regex ?(fname = solution_file) match_flag regex =
                 with Not_found -> false in
   if matched = match_flag then
     passed "OK"
-  else begin
-    failed "Bad match";
-    end_all_groups ();
-    CErrors.user_err (str "Bad match")
-  end
+  else
+    failed "Bad match"
 
-let run_system_command ?err_msg args =
+let run_system_command ?(err_msg = "Failed") args =
   let cmd = String.concat " " args in
   Printf.printf "Running: %s" cmd;
-  match Unix.system cmd with
-  | Unix.WEXITED 0 -> ()
-  | _ ->
-    let msg = match err_msg with None -> "Failed" | Some msg -> msg in
-    failed msg;
-    end_all_groups ();
-    CErrors.user_err (str msg)
+  match Unix.system (cmd ^ " 2>&1") with
+  | Unix.WEXITED 0 -> true
+  | _ -> (failed err_msg; false)
 
 let write_file fname str =
   let oc = open_out fname in
@@ -165,7 +163,7 @@ let write_file fname str =
 (** Compiles and runs the given OCaml source files *)
 let compile_and_run files ?(options = "") driver_code =
   write_file driver_file driver_code;
-  run_system_command ~err_msg:"Compilation failed" ([ocaml_compiler; options] @ files @ [driver_file]);
-  passed "OK";
-  run_system_command ["./a.out"];
-  passed "OK"
+  if run_system_command ~err_msg:"Compilation failed" ([ocaml_compiler; options] @ files @ [driver_file]) then begin
+    passed "OK";
+    if run_system_command ["./a.out"] then passed "OK"
+  end

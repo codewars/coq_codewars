@@ -10,6 +10,8 @@ Extract Inductive nat => "int"
 Extract Constant plus => "( + )".
 Extract Constant mult => "( * )".
 
+(* CWStopOnFailure 0. *)
+
 CWGroup "Group".
 
 CWTest "Successful Extraction Test".
