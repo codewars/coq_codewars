@@ -109,18 +109,20 @@ let test_axioms ?(msg = "Axiom Test") c_ref ax_refs =
   let ax_objs = List.map (fun c -> Printer.Axiom (Printer.Constant c, [])) ax_csts in
   let ax_set = Printer.ContextObjectSet.of_list ax_objs in
   let assums = assumptions c_ref in
-  let iter t ty =
+  let iter t ty axioms =
     match t with
     | Printer.Axiom (ax, _) ->
-      if Printer.ContextObjectSet.mem t ax_set then ()
+      if Printer.ContextObjectSet.mem t ax_set then axioms
       else begin
         let p_axiom = pr_axiom env sigma ax ty in
-        failed (Printf.sprintf "%s\nProhibited Axiom: %s" msg (string_of_ppcmds p_axiom))
+        string_of_ppcmds p_axiom :: axioms
       end
-    | _ -> ()
+    | _ -> axioms
   in
-  let () = Printer.ContextObjectMap.iter iter assums in
-  passed msg
+  let axioms = Printer.ContextObjectMap.fold_left iter assums [] in
+  match axioms with
+  | [] -> passed msg
+  | _ -> failed (Printf.sprintf "%s\nProhibited Axioms: %s" msg (String.concat "\n" axioms))
 
 (** Tests that the file size is less than a given number *)
 let test_file_size ?(fname = solution_file) size =

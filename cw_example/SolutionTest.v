@@ -12,7 +12,11 @@ CWGroup "Tests for Solution.solution".
   (* CWEndTest is optional before CWTest or CWEndGroup *)
   CWEndTest.
   CWTest "Assumptions test".
-    CWAssert "Testing solution" Solution.solution Assumes. (*test_axiom.*)
+    CWAssert "Testing solution" Solution.solution Assumes test_axiom.
+    CWAssert "Testing solution (failure)" Solution.solution Assumes. (*test_axiom.*)
+    CWAssert "Testing solution2" Solution.solution2 Assumes test_axiom another_axiom.
+    CWAssert "Testing solution2 (failure 1)" Solution.solution2 Assumes test_axiom.
+    CWAssert "Testing solution2 (failure 2)" Solution.solution2 Assumes.
   CWTest "Type test 2".
     Definition expected := 1 + 1 = 3.
     CWAssert Solution.solution : expected.
