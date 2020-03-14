@@ -92,7 +92,7 @@ let locate_constant r =
   try
     let gr = Smartlocate.locate_global_with_alias r in
     match gr with
-    | Globnames.ConstRef cst -> cst
+    | Names.GlobRef.ConstRef cst -> cst
     | _ -> CErrors.user_err (str "A constant is expected: " ++ Printer.pr_global gr)
   with Not_found -> CErrors.user_err (str "Not found: " ++ Libnames.pr_qualid r)
 
