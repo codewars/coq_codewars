@@ -52,12 +52,17 @@ Print Assumptions sqrt_pos.
 CWGroup "Real numbers".
 
 Fail CWAssert sqrt_pos Assumes.
-CWAssert "Real Number Axioms" sqrt_pos Assumes
+CWAssert "Real Number Axioms (Dedekind)" sqrt_pos Assumes
+  ClassicalDedekindReals.sig_not_dec
+  ClassicalDedekindReals.sig_forall_dec
+  functional_extensionality_dep.
+
+(* CWAssert "Real Number Axioms" sqrt_pos Assumes
   R R0 R1 Rplus Rmult Ropp Rinv Rlt up
   Rplus_comm Rplus_assoc Rplus_opp_r Rplus_0_l
   Rmult_comm Rmult_assoc Rinv_l Rmult_1_l R1_neq_R0
   Rmult_plus_distr_l total_order_T
   Rlt_asym Rlt_trans Rplus_lt_compat_l Rmult_lt_compat_l
-  archimed completeness.  
+  archimed completeness.   *)
 
 CWEndGroup.

@@ -5,8 +5,11 @@
 *.d
 /Makefile
 Makefile.conf
+g_coq_cw.ml
 .merlin
 *.vo
+*.vok
+*.vos
 *.glob
 *.aux
 *.cmi

@@ -5,5 +5,5 @@ theories/Loader.v
 
 src/coq_cw.ml
 src/coq_cw.mli
-src/g_coq_cw.ml4
+src/g_coq_cw.mlg
 src/coq_cw_plugin.mlpack
